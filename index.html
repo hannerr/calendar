@@ -48,28 +48,29 @@
             .modal-content {
                 width: 100%;
                 display: flex;
+                flex-flow: column;
                 align-items: center;
-                padding: 0 0.3rem 0 0.3rem;
                 text-decoration: none;
                 color: black;
             }
-            .modal-content:nth-child(even) {
+            .modal-content a:nth-child(even) {
                 background-color: #F7F8F8;
             }
-            .modal-content > div {
+            .modal-content > a {
                 display: flex;
-                flex-flow: column;
-                align-items: flex-start;
+                flex-flow: row;
+                width: 100%;
+                padding: 0 0.5rem 0 0.5rem;
                 line-height: 24px;
             }
-            .triangle {
+            .modal-content a:after {
                 content: '';
                 overflow: hidden;
                 display: inline;
                 font-size: 3px;
                 width: 4em;
                 height: 4em;
-                margin-top: 4em;
+                margin-top: 2em;
                 border-top: 1px solid #697982;
                 border-left: 1px solid #697982;
                 transform: rotate(135deg);   
@@ -161,10 +162,9 @@
                     //go through each event and add span with id and title
                     foundEvent.forEach(function(item, index) {
                         modalContent.insertAdjacentHTML('beforeend', `
-                            <a class='modal-content' href='${item.link}' target='blank'>
-                                <div><b>${item.title}</b>
-                                ${item.time}: ${item.location}</div> 
-                                <span class='triangle'></span> 
+                            <a href='${item.link}' target='blank'>
+                                <b>${item.title}</b>
+                                ${item.time}: ${item.location}
                             </a> 
                         `);
                     });
