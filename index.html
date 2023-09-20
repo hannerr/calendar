@@ -3,7 +3,7 @@
 <html lang="de">
     <!-- TODO
     - set date of calendar dynamically
-    - styling of popups: outer white arrow doesnt work still!
+    - styling of popups outer white arrow doesnt work still!
     -->
 	<head>
 		<!-- jsCalendar style -->
@@ -87,7 +87,7 @@
 			// Get elements
 			let elements = {
 				// Calendar element
-				calendar : document.getElementById("events-calendar")
+				calendar : document.getElementById("events-calendar"),
 			}
             //calendar settings
 			elements.calendar.className = "clean-theme yellow";
@@ -153,19 +153,23 @@
                     //set the class if there is a event for this date
                     element.className = 'date-active';
                     //make div with class modal and hidden
-                    const newDiv = document.createElement("div");
-                    newDiv.classList.add('modal', 'hidden');
-                    element.appendChild(newDiv);
+                    const modalDiv = document.createElement("div");
+                    modalDiv.classList.add('modal', 'hidden');
+                    modalDiv.setAttribute('data-modalid', currDate);
+                    const modalContent = document.createElement("div");
+                    modalContent.classList.add('modal-content');
                     //go through each event and add span with id and title
                     foundEvent.forEach(function(item, index) {
-                        newDiv.insertAdjacentHTML('beforeend', `
-                            <a class='modal-content' id='${item.id}' href='${item.link}' target='blank'>
+                        modalContent.insertAdjacentHTML('beforeend', `
+                            <a class='modal-content' href='${item.link}' target='blank'>
                                 <div><b>${item.title}</b>
                                 ${item.time}: ${item.location}</div> 
                                 <span class='triangle'></span> 
                             </a> 
                         `);
                     });
+                    modalDiv.appendChild(modalContent);
+                    element.appendChild(modalDiv);
                 }      
             });
             // Refresh layout
@@ -175,7 +179,7 @@
                 currDate = jsCalendar.tools.dateToString(new Date(date.getTime()), date_format, "de");
                 let showDate = events.filter(event => event.date == currDate);
                 //get from the id backwards the parent element modal
-                let modalDiv = document.getElementById(showDate[0].id).parentElement;
+                let modalDiv = document.querySelector('[data-modalid = "'+currDate+'"]');
                 //toggle hidden class
                 if (showDate) {
                     modalDiv.classList.toggle("hidden");
