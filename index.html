@@ -1,0 +1,194 @@
+
+<!DOCTYPE html>
+<html lang="de">
+    <!-- TODO
+    - set date of calendar dynamically
+    - positioning of popups
+    - styling of popups with name, time and href
+    -->
+	<head>
+		<!-- jsCalendar style -->
+        <link rel="stylesheet" type="text/css" href="jsCalendar.css">
+        <!-- jsCalendar script -->
+        <script type="text/javascript" src="jsCalendar.js"></script>
+        <!-- jsCalendar language script -->
+        <script type="text/javascript" src="jsCalendar.lang.de.js"></script>
+        <!-- auto jsCalendar element -->
+        <style>
+            /*set the date with events to yellow*/
+            .date-active {
+                background-color: #FFE31B!important;
+                color: black!important;
+                cursor: pointer!important;
+            }
+            /*unset the current color*/
+            .jsCalendar-current {
+                background-color: transparent!important;
+                color: black!important;
+            }
+            .modal {
+                position: absolute;
+                z-index: 1;
+                overflow: auto;
+                background-color: white;
+                box-shadow: 0px 0px 8px #00000029;
+            }
+            .modal:before {
+                content: '';
+                position: absolute;
+                display: block;    
+                width: 0px;        
+                left: 50%;
+                top: 0;
+                border: 10px solid transparent;
+                
+                border-top: 0;
+                border-bottom: 15px solid white;
+                transform: translate(-50%, calc(-100% - 5px));
+            }
+            .modal-content {
+                width: 100%;
+                display: flex;
+                align-items: center;
+                padding: 0 0.3rem 0 0.3rem;
+                text-decoration: none;
+                color: black;
+            }
+            .modal-content:nth-child(even) {
+                background-color: #F7F8F8;
+            }
+            .modal-content > div {
+                display: flex;
+                flex-flow: column;
+                align-items: flex-start;
+                line-height: 24px;
+            }
+            .triangle {
+                content: '';
+                overflow: hidden;
+                display: inline;
+                font-size: 3px;
+                width: 4em;
+                height: 4em;
+                margin-top: 4em;
+                border-top: 1px solid #697982;
+                border-left: 1px solid #697982;
+                transform: rotate(135deg);   
+            }
+            .hidden {
+                display: none;
+            }
+        </style>
+	</head>
+	<body>
+        <!-- Calendar element -->
+        <div id="events-calendar">
+        </div>
+		<script type="text/javascript">
+			// Get elements
+			let elements = {
+				// Calendar element
+				calendar : document.getElementById("events-calendar"),
+				// Input element
+				//events : document.getElementById("events")
+			}
+            //calendar settings
+			elements.calendar.className = "clean-theme yellow";
+			let calendar = jsCalendar.new(elements.calendar, "12/09/2023", {
+                navigator : true,
+                navigatorPosition : "center",
+                zeroFill : false,
+                monthFormat : "month YYYY",
+                firstDayOfTheWeek : "2",
+                dayFormat : "DD",
+                language : "de"
+            });
+			let date_format = "DD/MM/YYYY";
+            //events which them come from evo
+            let events = [
+                {
+                    id: "0",
+                    date : "14/09/2023",
+                    title: "Prima La Musica - Preisträgerkonzert",
+                    time: "15:00",
+                    location: "Konzerthaus Klagenfurt",
+                    link: "https://www.google.com"
+                },
+                {
+                    id: "1",
+                    date : "14/09/2023",
+                    title: "Vorspielstunde Klavier",
+                    time: "17:30",
+                    location: "Musikschule Winklern",
+                    link: "https://www.google.com"
+                },
+                {
+                    id: "2",
+                    date : "16/09/2023",
+                    title: "Vorspielstunde Harfe",
+                    time: "17:30",
+                    location: "Musikschule Flattach",
+                    link: "https://www.google.com"
+                },
+                {
+                    id: "3",
+                    date : "16/09/2023",
+                    title: "Vorspielstunde Blockflöte",
+                    time: "14:00",
+                    location: "Musikschule Flattach",
+                    link: "https://www.google.com"
+                },
+                {
+                    id: "4",
+                    date : "18/09/2023",
+                    title: "Vorspielstunde Harfe",
+                    time: "17:30",
+                    location: "Musikschule Flattach",
+                    link: "https://www.google.com"
+                }
+            ]
+
+            calendar.onDateRender(function(date, element, info) {
+                //get the current date and check if there is an event
+                currDate = jsCalendar.tools.dateToString(new Date(date.getTime()), date_format, "de");
+                let foundEvent = events.filter(event => event.date == currDate);
+                if (foundEvent.length != 0) {
+                    //set the class if there is a event for this date
+                    element.className = 'date-active';
+                    //make div with class modal and hidden
+                    const newDiv = document.createElement("div");
+                    newDiv.classList.add('modal', 'hidden');
+                    element.appendChild(newDiv);
+                    //go through each event and add span with id and title
+                    foundEvent.forEach(function(item, index) {
+                        newDiv.insertAdjacentHTML('beforeend', `
+                            <a class='modal-content' id='${item.id}' href='${item.link}' target='blank'>
+                                <div><b>${item.title}</b>
+                                ${item.time}: ${item.location}</div> 
+                                <span class='triangle'></span> 
+                            </a> 
+                        `);
+                    });
+                }      
+            });
+            // Refresh layout
+            calendar.refresh();
+            //show/hide event popup    
+			let showEvents = function(date, element){
+                currDate = jsCalendar.tools.dateToString(new Date(date.getTime()), date_format, "de");
+                let showDate = events.filter(event => event.date == currDate);
+                //get from the id backwards the parent element modal
+                let modalDiv = document.getElementById(showDate[0].id).parentElement;
+                //toggle hidden class
+                if (showDate) {
+                    modalDiv.classList.toggle("hidden");
+                }  
+            };
+			// Add events
+			calendar.onDateClick(function(event, date){
+                // Show events
+                showEvents(date);         
+			});    
+        </script>
+	</body>
+</html>
