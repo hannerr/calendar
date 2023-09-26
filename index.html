@@ -1,17 +1,13 @@
 
 <!DOCTYPE html>
 <html lang="de">
-    <!-- TODO
-    - set date of calendar dynamically
-    - styling of popups outer white arrow doesnt work still!
-    -->
 	<head>
 		<!-- jsCalendar style -->
-        <link rel="stylesheet" type="text/css" href="jsCalendar.css">
+        <link rel="stylesheet" type="text/css" href="../js-calendar/jsCalendar.css">
         <!-- jsCalendar script -->
-        <script type="text/javascript" src="jsCalendar.js"></script>
+        <script type="text/javascript" src="../js-calendar/jsCalendar.js"></script>
         <!-- jsCalendar language script -->
-        <script type="text/javascript" src="jsCalendar.lang.de.js"></script>
+        <script type="text/javascript" src="../js-calendar/jsCalendar.lang.de.js"></script>
         <!-- auto jsCalendar element -->
         <style>
             /*set the date with events to yellow*/
@@ -27,53 +23,52 @@
             }
             .modal {
                 position: absolute;
-                z-index: 1;
-                overflow: auto;
-                background-color: white;
+                transform: translate3d(0, 5%, 0);
                 box-shadow: 0px 0px 8px #00000029;
+                background: none;
             }
-            .modal:before {
-                content: '';
+            .modal:after {
+                content: "";
+                width: 20px;
+                height: 20px;
+                transform: rotate(-45deg);
+                background: #fff;
                 position: absolute;
-                display: block;    
-                width: 0px;        
-                left: 50%;
-                top: 0;
-                border: 10px solid transparent;
-                
-                border-top: 0;
-                border-bottom: 15px solid white;
-                transform: translate(-50%, calc(-100% - 5px));
+                box-shadow: 0px 0px 8px #00000029;
+                z-index: -1;
+                top: -5px;
+                left: 8px;
             }
             .modal-content {
-                width: 100%;
-                display: flex;
-                flex-flow: column;
-                align-items: center;
                 text-decoration: none;
-                color: black;
             }
             .modal-content a:nth-child(even) {
                 background-color: #F7F8F8;
             }
             .modal-content > a {
-                display: flex;
-                flex-flow: row;
-                width: 100%;
+                background-color: #fff;
+                display: grid;
                 padding: 0 0.5rem 0 0.5rem;
                 line-height: 24px;
+                grid-template-areas:
+                "p p p s"
             }
-            .modal-content a:after {
+            .modal-content p {
+                grid-area: p;
+                display: grid;
+                justify-items: start;
+            }
+            .modal-content span {
                 content: '';
-                overflow: hidden;
-                display: inline;
                 font-size: 3px;
                 width: 4em;
                 height: 4em;
                 margin-top: 2em;
+                margin-top: auto;
+                margin-bottom: auto;
                 border-top: 1px solid #697982;
                 border-left: 1px solid #697982;
-                transform: rotate(135deg);   
+                transform: rotate(135deg);
             }
             .hidden {
                 display: none;
@@ -102,7 +97,7 @@
                 language : "de"
             });
 			let date_format = "DD/MM/YYYY";
-            //events which them come from evo
+            //events which then come from evo
             let events = [
                 {
                     id: "0",
@@ -143,6 +138,14 @@
                     time: "17:30",
                     location: "Musikschule Flattach",
                     link: "https://www.google.com"
+                },
+                {
+                    id: "5",
+                    date : "18/01/2024",
+                    title: "Vorspielstunde Harfe",
+                    time: "17:30",
+                    location: "Musikschule Flattach",
+                    link: "https://www.google.com"
                 }
             ]
 
@@ -163,9 +166,13 @@
                     foundEvent.forEach(function(item, index) {
                         modalContent.insertAdjacentHTML('beforeend', `
                             <a href='${item.link}' target='blank'>
-                                <b>${item.title}</b>
-                                ${item.time}: ${item.location}
-                            </a> 
+                                <p>
+                                    <b>${item.title}</b>
+                                    ${item.time}: ${item.location}
+                                </p>
+                                <span></span>
+                            </a>
+                            
                         `);
                     });
                     modalDiv.appendChild(modalContent);
